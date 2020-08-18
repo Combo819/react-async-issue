@@ -1,24 +1,36 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useState } from 'react';
 import './App.css';
+import queue from 'async/queue';
+const concurrency = 1;
+
+const timeout = (task,resolve,reject,callback)=>{
+  window.setTimeout(()=>{
+    console.log(task);
+    if(task%2===0){
+      resolve();
+    }else{
+      reject();
+    }
+  },1500)
+}
+
+const q = queue(async function (task, callback) {
+  await new Promise((resolve,reject)=>{
+    timeout(task,resolve,reject)
+  });
+  console.log(`task ${task} ends`)
+  callback()
+}, concurrency);
 
 function App() {
+  const [num,setNum] = useState(0);
+  const clickHandler = () => {
+    q.push([num]);
+    setNum(num+1);
+  }
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <button onClick={clickHandler}>add one</button>
     </div>
   );
 }
