@@ -3,7 +3,7 @@ import './App.css';
 import queue from 'async/queue';
 const concurrency = 1;
 
-const timeout = (task,resolve,reject,callback)=>{
+const timeout = (task,resolve,reject)=>{
   window.setTimeout(()=>{
     console.log(task);
     if(task%2===0){
